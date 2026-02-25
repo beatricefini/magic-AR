@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <title>MAGIC – AR</title>
+
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- AR.js -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+
+    <!-- Script principale -->
+    <script src="script.js" defer></script>
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+  </head>
+
+  <body style="margin: 0; overflow: hidden;">
+
+    <a-scene
+  embedded
+  arjs="sourceType: webcam; detectionMode: mono; debugUIEnabled: true;"
+  vr-mode-ui="enabled: false"
+>
+
+      <!-- IMAGE MARKER -->
+      <a-marker
+  id="imageMarker"
+  type="pattern"
+  url="marker/pattern-marker.patt">
+</a-marker>
+
+      <!-- CAMERA -->
+      <a-entity camera></a-entity>
+
+    </a-scene>
+
+  </body>
+</html>
