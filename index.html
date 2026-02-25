@@ -2,15 +2,10 @@
 <html lang="it">
   <head>
     <meta charset="utf-8" />
-    <title>MAGIC – AR con modello 3D</title>
+    <title>MAGIC – AR Video</title>
 
-    <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-
-    <!-- AR.js -->
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-
-    <!-- Script principale -->
     <script src="script.js" defer></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -18,16 +13,19 @@
 
   <body style="margin:0; overflow:hidden;">
 
+    <!-- video HTML nascosto -->
+    <video id="video1" src="videos/video1.mp4" loop crossorigin="anonymous" playsinline webkit-playsinline muted></video>
+
     <a-scene
       embedded
       arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true;"
       vr-mode-ui="enabled: false"
     >
 
-      <!-- Marker Hiro preset -->
+      <!-- Marker Hiro -->
       <a-marker preset="hiro" id="imageMarker">
 
-        <!-- Modello 3D incluso direttamente nell'HTML -->
+        <!-- Modello 3D incluso -->
         <a-entity 
           id="magicModel"
           gltf-model="models/model.glb"
@@ -39,9 +37,7 @@
 
       </a-marker>
 
-      <!-- Camera -->
       <a-entity camera></a-entity>
-
     </a-scene>
 
   </body>
