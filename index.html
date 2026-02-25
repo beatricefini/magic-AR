@@ -2,13 +2,13 @@
 <html lang="it">
   <head>
     <meta charset="utf-8" />
-    <title>MAGIC – AR Pattern Marker</title>
+    <title>MAGIC – AR con modello 3D</title>
 
     <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-    <!-- AR.js (versione pattern/NFT) -->
-    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar-nft.js"></script>
+    <!-- AR.js -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 
     <!-- Script principale -->
     <script src="script.js" defer></script>
@@ -24,9 +24,20 @@
       vr-mode-ui="enabled: false"
     >
 
-      <!-- Marker pattern -->
-     <a-marker preset="hiro" id="imageMarker">
-</a-marker>
+      <!-- Marker Hiro preset -->
+      <a-marker preset="hiro" id="imageMarker">
+
+        <!-- Modello 3D incluso direttamente nell'HTML -->
+        <a-entity 
+          id="magicModel"
+          gltf-model="models/model.glb"
+          scale="0.5 0.5 0.5"
+          position="0 0 0"
+          rotation="0 0 0"
+          visible="false">
+        </a-entity>
+
+      </a-marker>
 
       <!-- Camera -->
       <a-entity camera></a-entity>
