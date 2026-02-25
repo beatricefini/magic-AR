@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
   marker.addEventListener("markerFound", () => {
     console.log("Marker trovato");
 
-    // crea cubo solo se non esiste
     if (!cube) {
       cube = document.createElement("a-box");
 
@@ -14,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
       cube.setAttribute("height", "0.5");
       cube.setAttribute("width", "0.5");
 
-      // posiziona sopra il marker
       cube.setAttribute("position", "0 0.25 0");
 
       marker.appendChild(cube);
