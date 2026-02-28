@@ -2,10 +2,15 @@
 <html lang="it">
   <head>
     <meta charset="utf-8" />
-    <title>MAGIC – AR Video</title>
+    <title>MAGIC – AR con video su vid1</title>
 
+    <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- AR.js -->
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+
+    <!-- Script principale -->
     <script src="script.js" defer></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -13,8 +18,8 @@
 
   <body style="margin:0; overflow:hidden;">
 
-    <!-- video HTML nascosto -->
-    <video id="video1" src="videos/video1.mp4" loop crossorigin="anonymous" playsinline webkit-playsinline muted></video>
+    <!-- Video nascosto -->
+    <video id="video1" src="videos/video1.mp4" loop crossorigin="anonymous" playsinline webkit-playsinline muted style="display:none"></video>
 
     <a-scene
       embedded
@@ -37,6 +42,7 @@
 
       </a-marker>
 
+      <!-- Camera -->
       <a-entity camera></a-entity>
     </a-scene>
 
