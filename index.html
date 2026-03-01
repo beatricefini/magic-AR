@@ -2,70 +2,24 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAGIC – AR Video Screens</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAGIC AR – Video Model</title>
 
   <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
   <!-- MindAR -->
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/dist/mindar-image.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
-    html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background:black; }
-    a-scene { visibility: hidden; opacity: 0; transition: opacity 1s ease-in-out; }
-
-    /* Overlay base */
-    .overlay { position: fixed; top:0; left:0; width:100vw; height:100vh; background:black; display:flex; justify-content:center; align-items:center; flex-direction:column; opacity:0; transition:opacity 1s ease-in-out; z-index:9999;}
-    .overlay.show { opacity:1; } .overlay.hide { opacity:0; }
-    .overlay img { max-width:80%; max-height:80%; width:auto; height:auto; }
-
-    #tapText { position:absolute; bottom:10%; width:100%; text-align:center; font-size:1.2rem; color:white; opacity:0; transition:opacity 1s; cursor:pointer; z-index:10; font-family:Arial,sans-serif;}
-    #tapText.show { opacity:1; }
-
-    /* Custom scanning UI */
-    #custom-scanning-ui { position: fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; display:flex; justify-content:center; align-items:center; z-index:998; transition:opacity 0.5s;}
-    #custom-scanning-ui.hidden { opacity:0; pointer-events:none; }
-    #custom-scanning-ui.visible { opacity:1; pointer-events:none; }
-
-    /* Angoli */
-    .corner { position:absolute; width:40px; height:40px; border:6px solid #ffffff; }
-    .top-left { top:10%; left:10%; border-right:none; border-bottom:none; }
-    .top-right { top:10%; right:10%; border-left:none; border-bottom:none; }
-    .bottom-left { bottom:10%; left:10%; border-right:none; border-top:none; }
-    .bottom-right { bottom:10%; right:10%; border-left:none; border-top:none; }
-
-    /* Barra animata */
-    #custom-scanning-ui .scan-bar { position:absolute; width:80%; height:6px; background:#ffffff; top:10%; animation:moveBar 2s infinite alternate ease-in-out;}
-    @keyframes moveBar { 0%{top:10%;} 100%{top:70%;} }
-
-    /* Nasconde pulsante VR A-Frame */
-    .a-enter-vr-button { display:none !important; }
+    html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:black;}
+    a-scene { width:100%; height:100%; }
   </style>
 </head>
 <body>
 
-  <!-- Overlay introduttivo -->
-  <div id="introOverlay" class="overlay">
-    <img src="images/count2.png" alt="Intro">
-  </div>
-
-  <!-- Overlay istruzioni -->
-  <div id="instructionsOverlay" class="overlay" style="display:flex; opacity:0;">
-    <img src="images/instructions.png" alt="Instructions">
-    <div id="tapText">Tap to start</div>
-  </div>
-
-  <!-- Custom scanning UI -->
-  <div id="custom-scanning-ui" class="visible">
-    <div class="corner top-left"></div>
-    <div class="corner top-right"></div>
-    <div class="corner bottom-left"></div>
-    <div class="corner bottom-right"></div>
-    <div class="scan-bar"></div>
-  </div>
-
-  <!-- VIDEO nascosti -->
+  <!-- Video nascosti -->
   <video id="video1" src="videos/video1.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
   <video id="video2" src="videos/video2.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
   <video id="video3" src="videos/video3.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
@@ -75,30 +29,18 @@
   <video id="video7" src="videos/video7.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
   <video id="video8" src="videos/video8.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
 
-  <!-- Scena AR -->
-  <a-scene 
-    mindar-image="imageTargetSrc: targets/target.mind; uiScanning:#custom-scanning-ui; uiLoading: ; uiError: ;"
-    color-space="sRGB"
-    renderer="colorManagement: true; physicallyCorrectLights:true;"
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false"
-  >
-    <a-assets>
-      <a-asset-item id="magicModelAsset" src="models/model.glb"></a-asset-item>
-    </a-assets>
+  <a-scene mindar-image="imageTargetSrc: targets/targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
 
+    <!-- Camera -->
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <a-entity light="type: ambient; color:#ffffff; intensity:0.8"></a-entity>
-    <a-entity light="type: directional; color:#ffffff; intensity:0.6" position="0 1 1"></a-entity>
-
-    <!-- Target steso a terra -->
+    <!-- Target -->
     <a-entity mindar-image-target="targetIndex:0" id="imageTarget">
-      <a-entity id="magicModel"
-                gltf-model="#magicModelAsset"
-                scale="2 2 2"
-                position="0 0.05 0"
-                rotation="-90 0 0"
+      <a-entity id="magicModel" 
+                gltf-model="models/model.glb" 
+                scale="2 2 2" 
+                position="0 0.05 0" 
+                rotation="-90 0 0" 
                 visible="false">
       </a-entity>
     </a-entity>
@@ -106,43 +48,5 @@
   </a-scene>
 
   <script src="js/main.js"></script>
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const intro = document.getElementById("introOverlay");
-    const instructions = document.getElementById("instructionsOverlay");
-    const tapText = document.getElementById("tapText");
-    const sceneEl = document.querySelector("a-scene");
-
-    setTimeout(() => intro.classList.add("show"), 100);
-    setTimeout(() => {
-      intro.classList.remove("show");
-      intro.classList.add("hide");
-      setTimeout(() => intro.remove(), 1000);
-
-      instructions.style.opacity = 1;
-      setTimeout(() => instructions.classList.add("show"), 100);
-      setTimeout(() => tapText.classList.add("show"), 500);
-
-      instructions.addEventListener("click", async () => {
-        instructions.classList.remove("show");
-        instructions.classList.add("hide");
-        setTimeout(() => instructions.remove(), 1000);
-
-        // mostra scena AR
-        sceneEl.style.visibility = "visible";
-        sceneEl.style.opacity = "1";
-
-        // avvia MindAR
-        const mindarSystem = sceneEl.systems["mindar-image-system"];
-        await mindarSystem.start();
-
-        // rimuove pulsante VR
-        const vrButton = document.querySelector(".a-enter-vr-button");
-        if (vrButton) vrButton.remove();
-      }, { once: true });
-    }, 5000);
-  });
-  </script>
-
 </body>
 </html>
