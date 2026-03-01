@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const marker = document.querySelector("#imageMarker");
+  const target = document.querySelector("#imageTarget");
   const model = document.querySelector("#magicModel");
 
   const videos = {
@@ -16,17 +16,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const textures = {};
   let initialized = false;
 
-  marker.addEventListener("markerFound", () => {
-    console.log("MARKER TROVATO");
+  target.addEventListener("targetFound", () => {
+    console.log("🎯 TARGET TROVATO");
     model.setAttribute("visible", "true");
 
     const mesh = model.getObject3D("mesh");
     if (!mesh) return;
 
-    // inizializza SOLO la prima volta
+    // inizializza SOLO una volta
     if (!initialized) {
-      console.log("inizializzo video texture");
-
       Object.keys(videos).forEach((key) => {
         const video = videos[key];
         const texture = new THREE.VideoTexture(video);
@@ -48,16 +46,16 @@ document.addEventListener("DOMContentLoaded", () => {
       initialized = true;
     }
 
-    // ▶️ AVVIO A CASCATA (anti-crash)
+    // ▶️ avvio a cascata (super stabile)
     Object.values(videos).forEach((video, index) => {
       setTimeout(() => {
         video.play();
-      }, index * 300); // 0ms, 300ms, 600ms, ...
+      }, index * 300);
     });
   });
 
-  marker.addEventListener("markerLost", () => {
-    console.log("MARKER PERSO");
+  target.addEventListener("targetLost", () => {
+    console.log("❌ TARGET PERSO");
     model.setAttribute("visible", "false");
     Object.values(videos).forEach(v => v.pause());
   });
