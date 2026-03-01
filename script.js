@@ -18,14 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   target.addEventListener("targetFound", () => {
     console.log("🎯 TARGET TROVATO");
-    model.setAttribute("visible", "true");
+    model.setAttribute("visible","true");
 
     const mesh = model.getObject3D("mesh");
     if (!mesh) return;
 
-    // inizializza SOLO una volta
-    if (!initialized) {
-      Object.keys(videos).forEach((key) => {
+    if(!initialized){
+      Object.keys(videos).forEach(key=>{
         const video = videos[key];
         const texture = new THREE.VideoTexture(video);
         texture.minFilter = THREE.LinearFilter;
@@ -34,10 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
         textures[key] = texture;
       });
 
-      mesh.traverse((node) => {
-        if (!node.isMesh || !node.material) return;
+      mesh.traverse(node=>{
+        if(!node.isMesh || !node.material) return;
         const name = node.material.name;
-        if (textures[name]) {
+        if(textures[name]){
           node.material.map = textures[name];
           node.material.needsUpdate = true;
         }
@@ -46,17 +45,14 @@ document.addEventListener("DOMContentLoaded", () => {
       initialized = true;
     }
 
-    // ▶️ avvio a cascata (super stabile)
-    Object.values(videos).forEach((video, index) => {
-      setTimeout(() => {
-        video.play();
-      }, index * 300);
+    Object.values(videos).forEach((video,index)=>{
+      setTimeout(()=> video.play(), index*300);
     });
   });
 
-  target.addEventListener("targetLost", () => {
+  target.addEventListener("targetLost", ()=>{
     console.log("❌ TARGET PERSO");
-    model.setAttribute("visible", "false");
-    Object.values(videos).forEach(v => v.pause());
+    model.setAttribute("visible","false");
+    Object.values(videos).forEach(v=>v.pause());
   });
 });
