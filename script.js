@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const target = document.querySelector("#imageTarget");
+  const marker = document.querySelector("#imageMarker");
   const model = document.querySelector("#magicModel");
 
   const videos = {
@@ -16,15 +16,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const textures = {};
   let initialized = false;
 
-  target.addEventListener("targetFound", () => {
-    console.log("🎯 TARGET TROVATO");
-    model.setAttribute("visible","true");
+  marker.addEventListener("markerFound", () => {
+    console.log("MARKER TROVATO");
+    model.setAttribute("visible", "true");
 
     const mesh = model.getObject3D("mesh");
     if (!mesh) return;
 
-    if(!initialized){
-      Object.keys(videos).forEach(key=>{
+    // inizializza SOLO la prima volta
+    if (!initialized) {
+      console.log("inizializzo video texture");
+
+      Object.keys(videos).forEach((key) => {
         const video = videos[key];
         const texture = new THREE.VideoTexture(video);
         texture.minFilter = THREE.LinearFilter;
@@ -33,10 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
         textures[key] = texture;
       });
 
-      mesh.traverse(node=>{
-        if(!node.isMesh || !node.material) return;
+      mesh.traverse((node) => {
+        if (!node.isMesh || !node.material) return;
         const name = node.material.name;
-        if(textures[name]){
+        if (textures[name]) {
           node.material.map = textures[name];
           node.material.needsUpdate = true;
         }
@@ -45,14 +48,17 @@ document.addEventListener("DOMContentLoaded", () => {
       initialized = true;
     }
 
-    Object.values(videos).forEach((video,index)=>{
-      setTimeout(()=> video.play(), index*300);
+    // ▶️ AVVIO A CASCATA (anti-crash)
+    Object.values(videos).forEach((video, index) => {
+      setTimeout(() => {
+        video.play();
+      }, index * 300); // 0ms, 300ms, 600ms, ...
     });
   });
 
-  target.addEventListener("targetLost", ()=>{
-    console.log("❌ TARGET PERSO");
-    model.setAttribute("visible","false");
-    Object.values(videos).forEach(v=>v.pause());
+  marker.addEventListener("markerLost", () => {
+    console.log("MARKER PERSO");
+    model.setAttribute("visible", "false");
+    Object.values(videos).forEach(v => v.pause());
   });
 });

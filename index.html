@@ -1,52 +1,54 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MAGIC AR – Video Model</title>
+  <head>
+    <meta charset="utf-8" />
+    <title>MAGIC – AR video screens</title>
 
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  <!-- MindAR -->
-  <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/dist/mindar-image.prod.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <!-- AR.js -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 
-  <style>
-    html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:black;}
-    a-scene { width:100%; height:100%; }
-  </style>
-</head>
-<body>
+    <!-- Script -->
+    <script src="script.js" defer></script>
 
-  <!-- Video nascosti -->
-  <video id="video1" src="videos/video1.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
-  <video id="video2" src="videos/video2.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
-  <video id="video3" src="videos/video3.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
-  <video id="video4" src="videos/video4.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
-  <video id="video5" src="videos/video5.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
-  <video id="video6" src="videos/video6.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
-  <video id="video7" src="videos/video7.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
-  <video id="video8" src="videos/video8.mp4" loop muted playsinline crossorigin="anonymous" style="display:none"></video>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
 
-  <a-scene mindar-image="imageTargetSrc: targets/targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+  <body style="margin:0; overflow:hidden;">
 
-    <!-- Camera -->
-    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    <!-- VIDEO (tutti nascosti) -->
+    <video id="video1" src="videos/video1.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video2" src="videos/video2.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video3" src="videos/video3.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video4" src="videos/video4.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video5" src="videos/video5.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video6" src="videos/video6.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video7" src="videos/video7.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video8" src="videos/video8.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
 
-    <!-- Target -->
-    <a-entity mindar-image-target="targetIndex:0" id="imageTarget">
-      <a-entity id="magicModel" 
-                gltf-model="models/model.glb" 
-                scale="2 2 2" 
-                position="0 0.05 0" 
-                rotation="-90 0 0" 
-                visible="false">
-      </a-entity>
-    </a-entity>
+    <a-scene
+      embedded
+      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true;"
+      vr-mode-ui="enabled: false"
+    >
 
-  </a-scene>
+      <!-- Marker Hiro -->
+      <a-marker preset="hiro" id="imageMarker">
 
-  <script src="js/main.js"></script>
-</body>
+        <a-entity 
+          id="magicModel"
+          gltf-model="models/model.glb"
+          scale="0.5 0.5 0.5"
+          position="0 0 0"
+          visible="false">
+        </a-entity>
+
+      </a-marker>
+
+      <a-entity camera></a-entity>
+    </a-scene>
+
+  </body>
 </html>
