@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const marker = document.querySelector("#imageMarker");
-  const model = document.querySelector("#magicModel");
+  const marker = document.querySelector("#marker");
+  const model = document.querySelector("#model");
 
   const videos = [
     document.querySelector("#video1"),
@@ -15,50 +15,51 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   const textures = {};
-  let initialized = false;
+  let ready = false;
 
   marker.addEventListener("markerFound", () => {
-    console.log("MARKER TROVATO");
+
     model.setAttribute("visible", true);
 
     const mesh = model.getObject3D("mesh");
-    if (!mesh) return;
+    if (!mesh || ready) return;
 
-    // inizializzazione UNA SOLA VOLTA
-    if (!initialized) {
-      console.log("Inizializzo video textures");
+    console.log("🎬 applico video textures");
 
-      videos.forEach((video, i) => {
-        const texture = new THREE.VideoTexture(video);
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-        texture.format = THREE.RGBAFormat;
-        textures[`video${i + 1}`] = texture;
-      });
-
-      mesh.traverse((node) => {
-        if (!node.isMesh || !node.material) return;
-
-        const matName = node.material.name;
-        if (textures[matName]) {
-          node.material.map = textures[matName];
-          node.material.needsUpdate = true;
-        }
-      });
-
-      initialized = true;
-    }
-
-    // ▶️ avvio progressivo (anti crash)
     videos.forEach((video, i) => {
+      video.load();
+      const tex = new THREE.VideoTexture(video);
+      tex.flipY = false;
+      tex.encoding = THREE.sRGBEncoding;
+      textures[`video${i + 1}`] = tex;
+    });
+
+    mesh.traverse((node) => {
+      if (!node.isMesh || !node.material) return;
+
+      const name = node.material.name;
+
+      if (textures[name]) {
+        node.material.emissive = new THREE.Color(1,1,1);
+        node.material.emissiveMap = textures[name];
+        node.material.emissiveIntensity = 1;
+        node.material.needsUpdate = true;
+
+        console.log("✔ assegnato:", name);
+      }
+    });
+
+    ready = true;
+
+    // ▶️ avvio progressivo
+    videos.forEach((v, i) => {
       setTimeout(() => {
-        video.play().catch(() => {});
+        v.play().catch(()=>{});
       }, i * 300);
     });
   });
 
   marker.addEventListener("markerLost", () => {
-    console.log("MARKER PERSO");
     model.setAttribute("visible", false);
     videos.forEach(v => v.pause());
   });
