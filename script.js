@@ -1,78 +1,66 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const marker = document.querySelector("#marker");
+  const marker = document.querySelector("#imageMarker");
   const model = document.querySelector("#magicModel");
 
-  const videos = {
-    vid1: document.querySelector("#video1"),
-    vid2: document.querySelector("#video2"),
-    vid3: document.querySelector("#video3"),
-    vid4: document.querySelector("#video4"),
-    vid5: document.querySelector("#video5"),
-    vid6: document.querySelector("#video6"),
-    vid7: document.querySelector("#video7"),
-    vid8: document.querySelector("#video8"),
-  };
+  const videos = [
+    document.querySelector("#video1"),
+    document.querySelector("#video2"),
+    document.querySelector("#video3"),
+    document.querySelector("#video4"),
+    document.querySelector("#video5"),
+    document.querySelector("#video6"),
+    document.querySelector("#video7"),
+    document.querySelector("#video8"),
+  ];
 
   const textures = {};
-  let modelReady = false;
-  let texturesAssigned = false;
+  let initialized = false;
 
-  // ✅ modello caricato
-  model.addEventListener("model-loaded", () => {
-    console.log("✅ MODELLO CARICATO");
-    modelReady = true;
-  });
-
-  marker.addEventListener("markerFound", async () => {
-    console.log("🎯 MARKER TROVATO");
-    model.setAttribute("visible", "true");
-
-    if (!modelReady) return;
+  marker.addEventListener("markerFound", () => {
+    console.log("MARKER TROVATO");
+    model.setAttribute("visible", true);
 
     const mesh = model.getObject3D("mesh");
     if (!mesh) return;
 
-    // ▶️ avvia i video (OBBLIGATORIO per mobile)
-    for (const video of Object.values(videos)) {
-      try {
-        await video.play();
-      } catch (e) {
-        console.warn("Autoplay bloccato:", e);
-      }
-    }
+    // inizializzazione UNA SOLA VOLTA
+    if (!initialized) {
+      console.log("Inizializzo video textures");
 
-    // 🎨 assegna texture UNA SOLA VOLTA
-    if (!texturesAssigned) {
-
-      Object.keys(videos).forEach((key) => {
-        const texture = new THREE.VideoTexture(videos[key]);
+      videos.forEach((video, i) => {
+        const texture = new THREE.VideoTexture(video);
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
         texture.format = THREE.RGBAFormat;
-        texture.flipY = false;
-        textures[key] = texture;
+        textures[`video${i + 1}`] = texture;
       });
 
       mesh.traverse((node) => {
         if (!node.isMesh || !node.material) return;
 
-        const name = node.material.name;
-        if (textures[name]) {
-          node.material.map = textures[name];
+        const matName = node.material.name;
+        if (textures[matName]) {
+          node.material.map = textures[matName];
           node.material.needsUpdate = true;
-          console.log("🎬 video assegnato a", name);
         }
       });
 
-      texturesAssigned = true;
+      initialized = true;
     }
+
+    // ▶️ avvio progressivo (anti crash)
+    videos.forEach((video, i) => {
+      setTimeout(() => {
+        video.play().catch(() => {});
+      }, i * 300);
+    });
   });
 
   marker.addEventListener("markerLost", () => {
-    console.log("❌ MARKER PERSO");
-    model.setAttribute("visible", "false");
-    Object.values(videos).forEach(v => v.pause());
+    console.log("MARKER PERSO");
+    model.setAttribute("visible", false);
+    videos.forEach(v => v.pause());
   });
 
 });
