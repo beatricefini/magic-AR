@@ -1,66 +1,55 @@
-document.addEventListener("DOMContentLoaded", () => {
 
-  const marker = document.querySelector("#imageMarker");
-  const model = document.querySelector("#magicModel");
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <title>MAGIC – AR video screens</title>
 
-  const videos = [
-    document.querySelector("#video1"),
-    document.querySelector("#video2"),
-    document.querySelector("#video3"),
-    document.querySelector("#video4"),
-    document.querySelector("#video5"),
-    document.querySelector("#video6"),
-    document.querySelector("#video7"),
-    document.querySelector("#video8"),
-  ];
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  const textures = {};
-  let initialized = false;
+    <!-- AR.js -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
 
-  marker.addEventListener("markerFound", () => {
-    console.log("MARKER TROVATO");
-    model.setAttribute("visible", true);
+    <!-- Script -->
+    <script src="script.js" defer></script>
 
-    const mesh = model.getObject3D("mesh");
-    if (!mesh) return;
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
 
-    // inizializzazione UNA SOLA VOLTA
-    if (!initialized) {
-      console.log("Inizializzo video textures");
+  <body style="margin:0; overflow:hidden;">
 
-      videos.forEach((video, i) => {
-        const texture = new THREE.VideoTexture(video);
-        texture.minFilter = THREE.LinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-        texture.format = THREE.RGBAFormat;
-        textures[`video${i + 1}`] = texture;
-      });
+    <!-- VIDEO (tutti nascosti) -->
+    <video id="video1" src="videos/video1.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video2" src="videos/video2.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video3" src="videos/video3.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video4" src="videos/video4.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video5" src="videos/video5.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video6" src="videos/video6.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video7" src="videos/video7.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
+    <video id="video8" src="videos/video8.mp4" loop muted playsinline webkit-playsinline crossorigin="anonymous" style="display:none"></video>
 
-      mesh.traverse((node) => {
-        if (!node.isMesh || !node.material) return;
+    <a-scene
+      embedded
+      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true;"
+      vr-mode-ui="enabled: false"
+    >
 
-        const matName = node.material.name;
-        if (textures[matName]) {
-          node.material.map = textures[matName];
-          node.material.needsUpdate = true;
-        }
-      });
+      <!-- Marker Hiro -->
+      <a-marker preset="hiro" id="imageMarker">
 
-      initialized = true;
-    }
+        <a-entity 
+          id="magicModel"
+          gltf-model="models/model.glb"
+          scale="1.5 1.5 1.5"
+          position ="0 0 0"
+          visible=" false">
+        </a-entity>
 
-    // ▶️ avvio progressivo (anti crash)
-    videos.forEach((video, i) => {
-      setTimeout(() => {
-        video.play().catch(() => {});
-      }, i * 300);
-    });
-  });
+      </a-marker>
 
-  marker.addEventListener("markerLost", () => {
-    console.log("MARKER PERSO");
-    model.setAttribute("visible", false);
-    videos.forEach(v => v.pause());
-  });
+      <a-entity camera></a-entity>
+    </a-scene>
 
-});
+  </body>
+</html>

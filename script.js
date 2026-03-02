@@ -1,67 +1,65 @@
+
 document.addEventListener("DOMContentLoaded", () => {
+  const marker = document.querySelector("#imageMarker");
+  const model = document.querySelector("#magicModel");
 
-  const marker = document.querySelector("#marker");
-  const model = document.querySelector("#model");
-
-  const videos = [
-    document.querySelector("#video1"),
-    document.querySelector("#video2"),
-    document.querySelector("#video3"),
-    document.querySelector("#video4"),
-    document.querySelector("#video5"),
-    document.querySelector("#video6"),
-    document.querySelector("#video7"),
-    document.querySelector("#video8"),
-  ];
+  const videos = {
+    vid1: document.querySelector("#video1"),
+    vid2: document.querySelector("#video2"),
+    vid3: document.querySelector("#video3"),
+    vid4: document.querySelector("#video4"),
+    vid5: document.querySelector("#video5"),
+    vid6: document.querySelector("#video6"),
+    vid7: document.querySelector("#video7"),
+    vid8: document.querySelector("#video8"),
+  };
 
   const textures = {};
-  let ready = false;
+  let initialized = false;
 
   marker.addEventListener("markerFound", () => {
-
-    model.setAttribute("visible", true);
+    console.log("MARKER TROVATO");
+    model.setAttribute("visible", "true");
 
     const mesh = model.getObject3D("mesh");
-    if (!mesh || ready) return;
+    if (!mesh) return;
 
-    console.log("🎬 applico video textures");
+    // inizializza SOLO la prima volta
+    if (!initialized) {
+      console.log("inizializzo video texture");
 
-    videos.forEach((video, i) => {
-      video.load();
-      const tex = new THREE.VideoTexture(video);
-      tex.flipY = false;
-      tex.encoding = THREE.sRGBEncoding;
-      textures[`video${i + 1}`] = tex;
-    });
+      Object.keys(videos).forEach((key) => {
+        const video = videos[key];
+        const texture = new THREE.VideoTexture(video);
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.format = THREE.RGBAFormat;
+        textures[key] = texture;
+      });
 
-    mesh.traverse((node) => {
-      if (!node.isMesh || !node.material) return;
+      mesh.traverse((node) => {
+        if (!node.isMesh || !node.material) return;
+        const name = node.material.name;
+        if (textures[name]) {
+          node.material.map = textures[name];
+          node.material.needsUpdate = true;
+        }
+      });
 
-      const name = node.material.name;
+      initialized = true;
+    }
 
-      if (textures[name]) {
-        node.material.emissive = new THREE.Color(1,1,1);
-        node.material.emissiveMap = textures[name];
-        node.material.emissiveIntensity = 1;
-        node.material.needsUpdate = true;
-
-        console.log("✔ assegnato:", name);
-      }
-    });
-
-    ready = true;
-
-    // ▶️ avvio progressivo
-    videos.forEach((v, i) => {
+    // ▶️ AVVIO A CASCATA (anti-crash)
+    Object.values(videos).forEach((video, index) => {
       setTimeout(() => {
-        v.play().catch(()=>{});
-      }, i * 300);
+        video.play();
+      }, index * 300); // 0ms, 300ms, 600ms, ...
     });
   });
 
   marker.addEventListener("markerLost", () => {
-    model.setAttribute("visible", false);
-    videos.forEach(v => v.pause());
+    console.log("MARKER PERSO");
+    model.setAttribute("visible", "false");
+    Object.values(videos).forEach(v => v.pause());
   });
-
 });
