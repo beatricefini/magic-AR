@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const marker = document.querySelector("#imageMarker");
+
+  const marker = document.querySelector("#marker");
   const model = document.querySelector("#magicModel");
 
   const videos = {
@@ -14,51 +15,64 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const textures = {};
-  let initialized = false;
+  let modelReady = false;
+  let texturesAssigned = false;
 
-  marker.addEventListener("markerFound", () => {
-    console.log("MARKER TROVATO");
+  // ✅ modello caricato
+  model.addEventListener("model-loaded", () => {
+    console.log("✅ MODELLO CARICATO");
+    modelReady = true;
+  });
+
+  marker.addEventListener("markerFound", async () => {
+    console.log("🎯 MARKER TROVATO");
     model.setAttribute("visible", "true");
+
+    if (!modelReady) return;
 
     const mesh = model.getObject3D("mesh");
     if (!mesh) return;
 
-    // inizializza SOLO la prima volta
-    if (!initialized) {
-      console.log("inizializzo video texture");
+    // ▶️ avvia i video (OBBLIGATORIO per mobile)
+    for (const video of Object.values(videos)) {
+      try {
+        await video.play();
+      } catch (e) {
+        console.warn("Autoplay bloccato:", e);
+      }
+    }
+
+    // 🎨 assegna texture UNA SOLA VOLTA
+    if (!texturesAssigned) {
 
       Object.keys(videos).forEach((key) => {
-        const video = videos[key];
-        const texture = new THREE.VideoTexture(video);
+        const texture = new THREE.VideoTexture(videos[key]);
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
         texture.format = THREE.RGBAFormat;
+        texture.flipY = false;
         textures[key] = texture;
       });
 
       mesh.traverse((node) => {
         if (!node.isMesh || !node.material) return;
+
         const name = node.material.name;
         if (textures[name]) {
           node.material.map = textures[name];
           node.material.needsUpdate = true;
+          console.log("🎬 video assegnato a", name);
         }
       });
 
-      initialized = true;
+      texturesAssigned = true;
     }
-
-    // ▶️ AVVIO A CASCATA (anti-crash)
-    Object.values(videos).forEach((video, index) => {
-      setTimeout(() => {
-        video.play();
-      }, index * 300); // 0ms, 300ms, 600ms, ...
-    });
   });
 
   marker.addEventListener("markerLost", () => {
-    console.log("MARKER PERSO");
+    console.log("❌ MARKER PERSO");
     model.setAttribute("visible", "false");
     Object.values(videos).forEach(v => v.pause());
   });
+
 });
